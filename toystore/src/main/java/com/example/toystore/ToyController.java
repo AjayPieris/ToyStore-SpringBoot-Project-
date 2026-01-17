@@ -17,6 +17,11 @@ public class ToyController {
         return toyRepository.findAll();
     }
 
+    @GetMapping("/search")
+    public List<Toy> searchToys(@RequestParam String name) {
+        return toyRepository.findByName(name);
+    }
+
     // 2. POST a new toy (Create)
     @PostMapping
     public Toy createToy(@RequestBody Toy toy) {
