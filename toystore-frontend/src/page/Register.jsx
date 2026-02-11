@@ -1,9 +1,10 @@
 import { useState } from 'react';
 
-export default function Register() {
+// THE FIX: We accept the onRegisterSuccess walkie-talkie here
+export default function Register({ onRegisterSuccess }) {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
-    const [message, setMessage] = useState(''); // To show "User Created" or errors
+    const [message, setMessage] = useState('');
 
     const handleRegister = async (e) => {
         e.preventDefault();
@@ -11,15 +12,21 @@ export default function Register() {
         try {
             const response = await fetch('http://localhost:8080/register', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                // We send the username, password, and give them the default role of "USER"
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ username: username, password: password, role: "USER" })
             });
 
-            const data = await response.text(); // Spring Boot sends back a simple string message
-            setMessage(data); // Show the message on the screen!
+            if (response.ok) {
+                const data = await response.text();
+                setMessage(data + " Redirecting to login...");
+
+                // THE FIX: Wait 1.5 seconds so they can read the message, then teleport!
+                setTimeout(() => {
+                    onRegisterSuccess();
+                }, 1500);
+            } else {
+                setMessage("Registration failed. That username might be taken.");
+            }
 
         } catch (error) {
             console.error("The truck crashed!", error);
@@ -32,20 +39,12 @@ export default function Register() {
             <h2>Sign Up for the Toy Store</h2>
 
             <form onSubmit={handleRegister} style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                <input
-                    type="text"
-                    placeholder="Choose a Username"
-                    required
-                    onChange={(e) => setUsername(e.target.value)}
-                />
-                <input
-                    type="password"
-                    placeholder="Choose a Password"
-                    required
-                    onChange={(e) => setPassword(e.target.value)}
-                />
-                <button type="submit">Create Account</button>
+                <input type="text" placeholder="Choose a Username" required onChange={(e) => setUsername(e.target.value)} />
+                <input type="password" placeholder="Choose a Password" required onChange={(e) => setPassword(e.target.value)} />
+                <button type="submit" style={{ padding: '10px', cursor: 'pointer' }}>Create Account</button>
             </form>
+
+            {message && <div style={{ marginTop: '20px', color: 'blue', fontWeight: 'bold' }}>{message}</div>}
         </div>
     );
 }

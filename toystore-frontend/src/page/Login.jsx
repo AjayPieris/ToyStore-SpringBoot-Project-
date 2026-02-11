@@ -1,58 +1,46 @@
 import { useState } from 'react';
 
-export default function Login() {
-    // 1. React's Memory (State)
+// 1. THE WALKIE-TALKIE: Notice the { onLoginSuccess } right here!
+export default function Login({ onLoginSuccess }) {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
-    const [token, setToken] = useState(''); // To show the token on the screen later
+    const [error, setError] = useState('');
 
-    // 2. The Delivery Truck (Sending data to Spring Boot)
     const handleLogin = async (e) => {
-        e.preventDefault(); // Stops the page from refreshing when you click submit
-
-        console.log("Sending the truck to Spring Boot...");
+        e.preventDefault();
+        setError('');
 
         try {
             const response = await fetch('http://localhost:8080/login', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                // Pack the box with the username and password React memorized
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ username: username, password: password })
             });
 
-            // The API hands back the long token string
-            const data = await response.text();
+            if (response.ok) {
+                const data = await response.text();
+                localStorage.setItem('vip_token', data);
 
-            console.log("The Factory said:", data);
-            setToken(data); // Save the token to React's memory!
-            localStorage.setItem('vip_token', data);
-
+                // 2. THE TELEPORT TRIGGER: This flips the switch in App.jsx!
+                onLoginSuccess();
+            } else {
+                setError("Login failed. Check your username and password.");
+            }
         } catch (error) {
             console.error("The truck crashed!", error);
+            setError("Cannot connect to the server.");
         }
     };
 
-    // 3. The Storefront UI (What the user sees)
     return (
-        <div style={{ textAlign: 'center', marginTop: '50px' }}>
-            <h2>Welcome to the Toy Store!</h2>
-
+        <div style={{ textAlign: 'center', marginTop: '20px' }}>
+            <h2>Front Desk Login</h2>
             <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', width: '300px', margin: '0 auto', gap: '10px' }}>
-                <input
-                    type="text"
-                    placeholder="Username"
-                    onChange={(e) => setUsername(e.target.value)}
-                />
-                <input
-                    type="password"
-                    placeholder="Password"
-                    onChange={(e) => setPassword(e.target.value)}
-                />
-                <button type="submit">Log In to get Token</button>
+                <input type="text" placeholder="Username" required onChange={(e) => setUsername(e.target.value)} />
+                <input type="password" placeholder="Password" required onChange={(e) => setPassword(e.target.value)} />
+                <button type="submit" style={{ padding: '10px', cursor: 'pointer', backgroundColor: '#007bff', color: 'white', border: 'none', borderRadius: '5px' }}>Log In</button>
             </form>
-
+            {error && <div style={{ marginTop: '20px', color: 'red', fontWeight: 'bold' }}>{error}</div>}
         </div>
     );
 }
