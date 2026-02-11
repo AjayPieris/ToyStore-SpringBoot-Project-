@@ -3,7 +3,7 @@ package com.example.toystore.security;
 import com.example.toystore.model.AppUser;
 import com.example.toystore.repository.AppUserRepository;
 
-import org.springframework.beans.factory.annotation.Autowired; // NEW IMPORT
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -19,7 +19,14 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter; // NEW IMPORT
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+// THE FIX: We are using the standard web imports now, NOT the 'reactive' ones!
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.Arrays;
 
 @Configuration
 @EnableWebSecurity
@@ -27,7 +34,6 @@ public class SecurityConfig {
 
     private final AppUserRepository userRepository;
 
-    // NEW: We bring the Laser Scanner (JwtFilter) into the room!
     @Autowired
     private JwtFilter jwtFilter;
 
@@ -56,22 +62,30 @@ public class SecurityConfig {
         };
     }
 
+    // NEW: The Approved License Plates List (CORS)
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(Arrays.asList("http://localhost:5173"));
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        configuration.setAllowedHeaders(Arrays.asList("*"));
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
+    }
+
     // 3. The Master Password Checker (For the Front Desk)
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
     }
 
-    // 4. The Connector (Tells the Password Checker how to find users and unscramble passwords)
+    // 4. The Connector
     @Bean
     public AuthenticationProvider authenticationProvider() {
-
-        // THE FIX: We put userDetailsService() directly inside the parentheses!
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider(userDetailsService());
-
-        // We still add the password scrambler right after
         authProvider.setPasswordEncoder(passwordEncoder());
-
         return authProvider;
     }
 
@@ -79,17 +93,15 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+                // THE FIX: We actually tell the Bouncer to look at the CORS list!
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        // We added "/login" so people can get their token!
                         .requestMatchers("/register", "/login", "/error").permitAll()
                         .anyRequest().authenticated()
                 )
-                // Tell the factory to have total amnesia. Rely 100% on the Token.
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider())
-
-                // NEW: Plug the Laser Scanner in right before the Bouncer!
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
