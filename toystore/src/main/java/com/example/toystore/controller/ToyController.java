@@ -1,47 +1,56 @@
 package com.example.toystore.controller;
 
 import com.example.toystore.model.Toy;
-import com.example.toystore.repository.ToyRepository;
+import com.example.toystore.service.ToyService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+
+import java.io.IOException;
 import java.util.List;
 
-@RestController // Tells Spring: "This class handles web requests"
-@RequestMapping("/toys") // All URLs will start with /toys
+@RestController
+@RequestMapping("/toys")
 public class ToyController {
 
-    @Autowired // Dependency Injection: "Hey Spring, please bring me the Stock Clerk (Repository)"
-    private ToyRepository toyRepository;
+    // The Manager ONLY has a walkie-talkie for the Inspector now!
+    @Autowired
+    private ToyService toyService;
 
-    // 1. GET all toys (Read)
+    // 1. GET all toys
     @GetMapping
     public List<Toy> getAllToys() {
-        return toyRepository.findAll();
+        return toyService.getAllToys();
     }
 
+    // 2. SEARCH toys
     @GetMapping("/search")
     public List<Toy> searchToys(@RequestParam String name) {
-        return toyRepository.findByName(name);
+        return toyService.searchToys(name); // Asked the Inspector!
     }
 
-    // 2. POST a new toy (Create)
+    // 3. POST a new toy
     @PostMapping
     public Toy createToy(@RequestBody Toy toy) {
-        return toyRepository.save(toy);
+        return toyService.createToy(toy); // Asked the Inspector!
     }
 
-    // 3. PUT (Update) a toy
+    // 4. PUT (Update) a toy
     @PutMapping("/{id}")
     public Toy updateToy(@PathVariable Long id, @RequestBody Toy toyDetails) {
-        Toy toy = toyRepository.findById(id).orElseThrow(); // Find the toy or error
-        toy.setName(toyDetails.getName());
-        toy.setPrice(toyDetails.getPrice());
-        return toyRepository.save(toy);
+        return toyService.updateToy(id, toyDetails); // Asked the Inspector!
+
     }
 
-    // 4. DELETE a toy
+    // 5. DELETE a toy
     @DeleteMapping("/{id}")
     public void deleteToy(@PathVariable Long id) {
-        toyRepository.deleteById(id);
+        toyService.deleteToy(id); // Asked the Inspector!
+    }
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<String> handleIllegalArgumentException(IllegalArgumentException ex) {
+        return ResponseEntity.badRequest().body(ex.getMessage());
     }
 }
+

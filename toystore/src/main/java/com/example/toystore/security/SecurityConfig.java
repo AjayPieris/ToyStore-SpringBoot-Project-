@@ -82,7 +82,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         // We added "/login" so people can get their token!
-                        .requestMatchers("/register", "/login").permitAll()
+                        .requestMatchers("/register", "/login", "/error").permitAll()
                         .anyRequest().authenticated()
                 )
                 // Tell the factory to have total amnesia. Rely 100% on the Token.
