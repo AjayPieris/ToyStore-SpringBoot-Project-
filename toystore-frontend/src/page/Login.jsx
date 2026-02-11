@@ -53,12 +53,6 @@ export default function Login() {
                 <button type="submit">Log In to get Token</button>
             </form>
 
-            {/* If we get a token, show it on the screen! */}
-            {token && (
-                <div style={{ marginTop: '20px', color: 'green', wordWrap: 'break-word' }}>
-                    <strong>Success! Your VIP Token:</strong> <br/> {token}
-                </div>
-            )}
         </div>
     );
 }
