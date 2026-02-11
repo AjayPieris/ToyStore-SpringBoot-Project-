@@ -1,5 +1,6 @@
-package com.example.toystore;
+package com.example.toystore.repository;
 
+import com.example.toystore.model.Toy;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import java.util.List;

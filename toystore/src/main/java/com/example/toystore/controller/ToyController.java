@@ -1,5 +1,7 @@
-package com.example.toystore;
+package com.example.toystore.controller;
 
+import com.example.toystore.model.Toy;
+import com.example.toystore.repository.ToyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;

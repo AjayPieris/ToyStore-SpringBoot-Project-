@@ -1,4 +1,4 @@
-package com.example.toystore;
+package com.example.toystore.model;
 
 import jakarta.persistence.*;
 

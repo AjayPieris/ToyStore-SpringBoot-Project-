@@ -1,5 +1,6 @@
-package com.example.toystore;
+package com.example.toystore.repository;
 
+import com.example.toystore.model.AppUser;
 import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 
