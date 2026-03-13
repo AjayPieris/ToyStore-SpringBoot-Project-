@@ -44,7 +44,7 @@ export default function Register({ onRegisterSuccess }) {
                 <button type="submit" style={{ padding: '10px', cursor: 'pointer' }}>Create Account</button>
             </form>
 
-            {message && <div style={{ marginTop: '20px', color: 'blue', fontWeight: 'bold' }}>{message}</div>}
+
         </div>
     );
 }
