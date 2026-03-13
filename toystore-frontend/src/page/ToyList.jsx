@@ -293,7 +293,7 @@ export default function ToyList() {
                   <div className="flex w-full sm:w-auto gap-3 mt-2 sm:mt-0">
                     <button
                       onClick={() => startEditing(toy)}
-                      className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2 bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 font-bold rounded-xl border border-amber-500/30 transition-all shadow-md transform hover:-translate-y-0.5 active:translate-y-0"
+                      className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2 bg-amber-500/80 hover:bg-amber-500 text-white font-bold rounded-xl border border-amber-400/50 transition-all shadow-[0_4px_15px_rgba(245,158,11,0.3)] hover:shadow-[0_6px_20px_rgba(245,158,11,0.5)] transform hover:-translate-y-0.5 active:translate-y-0 backdrop-blur-sm"
                     >
                       <svg
                         className="w-4 h-4"
@@ -314,7 +314,7 @@ export default function ToyList() {
 
                     <button
                       onClick={() => handleDeleteToy(toy.id)}
-                      className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2 bg-red-500/20 hover:bg-red-500/30 text-red-300 font-bold rounded-xl border border-red-500/30 transition-all shadow-md transform hover:-translate-y-0.5 active:translate-y-0"
+                      className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2 bg-red-500/80 hover:bg-red-500 text-white font-bold rounded-xl border border-red-400/50 transition-all shadow-[0_4px_15px_rgba(239,68,68,0.3)] hover:shadow-[0_6px_20px_rgba(239,68,68,0.5)] transform hover:-translate-y-0.5 active:translate-y-0 backdrop-blur-sm"
                     >
                       <svg
                         className="w-4 h-4"
