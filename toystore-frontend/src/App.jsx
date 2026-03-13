@@ -31,7 +31,7 @@ export default function App() {
     if (!isAuthenticated) {
         return (
             <div style={{ fontFamily: 'sans-serif', display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: '50px' }}>
-                <h1>Welcome to The Toy Store</h1>
+                <h1 className="text-red-600 font-bold text-4xl">Welcome to The Toy Store</h1>
 
                 {/* Toggle between Login and Sign Up */}
                 <div style={{ marginBottom: '20px' }}>
